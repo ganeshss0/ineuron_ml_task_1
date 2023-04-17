@@ -1,2 +1,2 @@
-# ineuron_ml_task_1
+# Food Delivery Time Prediction
 This repository contains the ineuron machine learning task 1

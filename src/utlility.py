@@ -3,8 +3,11 @@ from src.exception import CustomException
 from src.logger import logging
 import pickle
 import numpy as np
+import pandas as pd
 import redis
 from dataclasses import dataclass
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+from typing import Any
 
 # Radius of Earth (km)
 Earth_Radius = 6371
@@ -24,7 +27,7 @@ def saveObject(file_path: str, obj: object) -> None:
         raise CustomException(e, sys)
     
 
-def format_24_hour(Time: str) -> object:
+def format_24_hour(Time: str) -> Any:
     '''Returns string/NaN, If input is NaN then it return NaN, else based on the conditions.\n
         23:12 -> 23:12\n
         24:00 -> 00:00\n
@@ -53,7 +56,7 @@ def format_24_hour(Time: str) -> object:
 # convert degree into radian
 degree_radian = lambda x: x * (np.pi/180)
 
-def globe_distance(data: 'DataFrame', x1: str, y1: str, x2: str, y2: str) -> float:
+def globe_distance(data: pd.DataFrame, x1: str, y1: str, x2: str, y2: str) -> float:
 
     """Return the distance between (x1, y1) and (x2, y2), Where (x1, y1) are latitude and longitude of first location and 
     (x2, y2) are latitude and longitude of second location."""
@@ -67,7 +70,7 @@ def globe_distance(data: 'DataFrame', x1: str, y1: str, x2: str, y2: str) -> flo
     D = 2 * Earth_Radius * np.arcsin(np.sqrt(d))
     return np.round(D, 2)
 
-def fetch_redis(connection, key, name = 'default'):
+def fetch_redis(connection, key, name = 'default') -> (list[str]|str):
     try:
         logging.info('Try Fetch Data Redis Cloud')
         if key == 'users':
@@ -100,5 +103,35 @@ def redis_connect(host: str, port: int, password: str, db: int, ssl: bool, **kwa
         return cnct
     except Exception as e:
         logging.error('Connection Failed Redis Cloud')
+        logging.error(e)
+        raise CustomException(e, sys)
+    
+
+def evalute_model(X_train: np.array, X_test: np.array, y_train: np.array, y_test: np.array, models: dict) -> pd.DataFrame:
+    try:
+        report = []
+
+        for model in models:
+            MODEL = models[model]
+
+            # Model Training
+            MODEL.fit(X_train, y_train)
+
+            # Predict Test Data
+            y_pred = MODEL.predict(X_test)
+
+            # Evaluation
+
+            report.append([
+                model,
+                mean_absolute_error(y_test, y_pred),
+                r2_score(y_test, y_pred),
+                np.sqrt(mean_squared_error(y_test, y_pred))
+            ])
+
+        return pd.DataFrame(report, columns = ['ModelName', 'MAE', 'R2Score', 'RMSE'])
+
+    except Exception as e:
+        logging.error('FAILED to Train Model')
         logging.error(e)
         raise CustomException(e, sys)

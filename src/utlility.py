@@ -3,6 +3,8 @@ from src.exception import CustomException
 from src.logger import logging
 import pickle
 import numpy as np
+import redis
+from dataclasses import dataclass
 
 # Radius of Earth (km)
 Earth_Radius = 6371
@@ -64,3 +66,39 @@ def globe_distance(data: 'DataFrame', x1: str, y1: str, x2: str, y2: str) -> flo
     d = np.square(np.sin(lat_diff)) + np.cos(degree_radian(x1)) * np.cos(degree_radian(x2)) * np.square(np.sin(lon_diff))
     D = 2 * Earth_Radius * np.arcsin(np.sqrt(d))
     return np.round(D, 2)
+
+def fetch_redis(connection, key, name = 'default'):
+    try:
+        logging.info('Try Fetch Data Redis Cloud')
+        if key == 'users':
+            data = connection.hget('users', name)
+        else:
+            data = connection.lrange(key, 0, -1)
+
+        logging.info('Successful Fetch Data Redis Cloud')
+        return data
+    
+    except Exception as e:
+        logging.error('Failed Fetch Data Redis Cloud')
+        logging.error(e)
+        raise CustomException(e, sys)
+    
+
+
+def redis_connect(host: str, port: int, password: str, db: int, ssl: bool, **kwargs) -> redis.StrictRedis:
+    try: 
+        cnct = redis.StrictRedis(
+            host = host,
+            port = port,
+            db = db,
+            password = password,
+            ssl = ssl,
+            **kwargs
+        )
+        if cnct.ping():
+            logging.info('Connection Successful Redis Cloud')
+        return cnct
+    except Exception as e:
+        logging.error('Connection Failed Redis Cloud')
+        logging.error(e)
+        raise CustomException(e, sys)

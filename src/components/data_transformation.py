@@ -1,7 +1,7 @@
 import os, sys
 from src.exception import CustomException
 from src.logger import logging
-from src.utlility import saveObject, format_24_hour, globe_distance, fetch_redis, redis_connect
+from src.utlility import saveObject, globe_distance, fetch_redis, redis_connect, add_time_feature
 
 import numpy as np
 import pandas as pd
@@ -32,52 +32,7 @@ class DataTransform:
         ssl = True,
         decode_responses = True
     )
-    
-    def add_time_feature(self, data) -> None:
-        
-        # Appling the format_24_hour function on both Time_Orderd and Time_Order_picked columns
-        data['Time_Orderd'] = data.Time_Orderd.apply(format_24_hour)
-        data['Time_Order_picked'] = data.Time_Order_picked.apply(format_24_hour)
 
-        order = data[(data.Time_Order_picked.notna() & data.Time_Orderd.notna())]
-
-
-        # Converting the Time_Orderd into DateTime object
-        order_time = pd.to_datetime(order['Time_Orderd'])
-
-        # Converting the Time_Order_picked to DateTime object
-        order_picked = pd.to_datetime(order['Time_Order_picked'])
-
-        # Median difference between order picked and order time(seconds)
-        median_order_pick_time = (order_picked - order_time).dt.seconds.median()
-        
-        # Selecting only those columns where Time_Ordered is NaN and Time_Order_picked is not NaN
-        order = data.loc[data.Time_Orderd.isna() & data.Time_Order_picked.notna()]
-
-        # Converting into DateTime object
-        order_picked = pd.to_datetime(order['Time_Order_picked'])
-
-        # Here subtracting Median Order Picking Time (600 seconds) from Order Picked Time
-        data['Time_Orderd'].fillna(
-            value = (order_picked - pd.Timedelta(seconds = median_order_pick_time)).dt.strftime('%H:%M'), 
-            inplace = True
-            )
-
-        data['order_hour'] = data['Time_Orderd'].str.split(':', expand = True)[0].astype(float)
-    
-    def distance_from_locations(self, data):
-        data['distance_rest_deliv'] = globe_distance(
-                data = data, 
-                x1 = 'Restaurant_latitude', 
-                y1 = 'Restaurant_longitude', 
-                x2 = 'Delivery_location_latitude', 
-                y2 = 'Delivery_location_longitude'
-                )
-        data.drop([
-        'Restaurant_latitude', 
-        'Restaurant_longitude', 
-        'Delivery_location_latitude', 
-        'Delivery_location_longitude'], axis = 1, inplace = True)
 
     def build_pipeline(self):
         try:
@@ -108,6 +63,7 @@ class DataTransform:
             
             cats_pipe = Pipeline(
                 steps = (
+                
                 ('imputer', SimpleImputer(strategy = 'most_frequent')),
                 ('ordinalencoder', OrdinalEncoder(categories = categories)),
                 ('scaler', StandardScaler())
@@ -136,6 +92,27 @@ class DataTransform:
         try:
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
+
+            # adding Column
+            add_time_feature(train_df)
+            add_time_feature(test_df)
+
+            # adding distance column
+            train_df['distance_rest_deliv'] = globe_distance(
+                data = train_df, 
+                x1 = 'Restaurant_latitude', 
+                y1 = 'Restaurant_longitude', 
+                x2 = 'Delivery_location_latitude', 
+                y2 = 'Delivery_location_longitude'
+                )
+            
+            test_df['distance_rest_deliv'] = globe_distance(
+                data = test_df, 
+                x1 = 'Restaurant_latitude', 
+                y1 = 'Restaurant_longitude', 
+                x2 = 'Delivery_location_latitude', 
+                y2 = 'Delivery_location_longitude'
+                )
             
 
             logging.info('Train Test Data Loaded Succesful')

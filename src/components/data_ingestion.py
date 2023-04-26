@@ -53,16 +53,16 @@ class DataIngestion:
 
 
 
-# from src.components.data_transformation import DataTransform
-# from src.components.model_trainer import ModelTrainer
+from src.components.data_transformation import DataTransform
+from src.components.model_trainer import ModelTrainer
 
-# if __name__ == "__main__":
-#     start = DataIngestion()
-#     train_path, test_path = start.initiate_data_ingestion()
-#     print(train_path)
-#     print(test_path)
-#     data_transform = DataTransform()
-#     train_data, test_data, preprocessor = data_transform.initiate_data_transform(train_path, test_path)
-#     model_trainer = ModelTrainer()
-#     model_path = model_trainer.initiate_model_training(train_data, test_data)
-#     print('Working Fine')
+if __name__ == "__main__":
+    start = DataIngestion()
+    train_path, test_path = start.initiate_data_ingestion()
+    print(train_path)
+    print(test_path)
+    data_transform = DataTransform()
+    train_data, test_data, preprocessor = data_transform.initiate_data_transform(train_path, test_path)
+    model_trainer = ModelTrainer()
+    model_path = model_trainer.initiate_model_training(train_data, test_data)
+    print('Working Fine')

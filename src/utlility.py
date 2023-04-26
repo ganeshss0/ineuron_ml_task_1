@@ -19,13 +19,26 @@ def saveObject(file_path: str, obj: object) -> None:
 
         with open(file_path, 'wb') as file:
             pickle.dump(obj, file)
-        logging.info(f'FAIL Save Object at {file_path}')
+        logging.info(f'Successful Save Object at {file_path}')
 
     except Exception as e:
         logging.error(f'FAIL Save Object at {file_path}')
         logging.error(e)
         raise CustomException(e, sys)
     
+def loadObject(file_path: str) -> None:
+    try:
+        with open(file_path, 'rb') as file:
+            obj = pickle.load(file)
+        logging.info(f'Successful Read Object at {file_path}')
+        return obj
+    
+    except Exception as e:
+        logging.error(f'FAIL Read Object at {file_path}')
+        logging.error(e)
+        raise CustomException(e, sys)
+
+
 
 def format_24_hour(Time: str) -> Any:
     '''Returns string/NaN, If input is NaN then it return NaN, else based on the conditions.\n
@@ -135,3 +148,37 @@ def evalute_model(X_train: np.array, X_test: np.array, y_train: np.array, y_test
         logging.error('FAILED to Train Model')
         logging.error(e)
         raise CustomException(e, sys)
+
+
+
+def add_time_feature(data: pd.DataFrame) -> None:
+    
+    # Appling the format_24_hour function on both Time_Orderd and Time_Order_picked columns
+    data['Time_Orderd'] = data.Time_Orderd.apply(format_24_hour)
+    data['Time_Order_picked'] = data.Time_Order_picked.apply(format_24_hour)
+
+    order = data[(data.Time_Order_picked.notna() & data.Time_Orderd.notna())]
+
+
+    # Converting the Time_Orderd into DateTime object
+    order_time = pd.to_datetime(order['Time_Orderd'])
+
+    # Converting the Time_Order_picked to DateTime object
+    order_picked = pd.to_datetime(order['Time_Order_picked'])
+
+    # Median difference between order picked and order time(seconds)
+    median_order_pick_time = (order_picked - order_time).dt.seconds.median()
+    
+    # Selecting only those columns where Time_Ordered is NaN and Time_Order_picked is not NaN
+    order = data.loc[data.Time_Orderd.isna() & data.Time_Order_picked.notna()]
+
+    # Converting into DateTime object
+    order_picked = pd.to_datetime(order['Time_Order_picked'])
+
+    # Here subtracting Median Order Picking Time (600 seconds) from Order Picked Time
+    data['Time_Orderd'].fillna(
+        value = (order_picked - pd.Timedelta(seconds = median_order_pick_time)).dt.strftime('%H:%M'), 
+        inplace = True
+        )
+
+    data['order_hour'] = data['Time_Orderd'].str.split(':', expand = True)[0].astype(float)

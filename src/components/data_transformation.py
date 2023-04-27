@@ -17,7 +17,7 @@ from dataclasses import dataclass
 
 @dataclass
 class DataTransformConfig:
-    preprocessor_obj_path = os.path.join('artifacts', 'preprocessor.pkl')
+    preprocessor_obj_path = os.path.join('artifacts', 'preprocessor.joblib')
 
 
 

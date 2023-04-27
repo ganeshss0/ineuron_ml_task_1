@@ -83,7 +83,7 @@ def globe_distance(data: pd.DataFrame, x1: str, y1: str, x2: str, y2: str) -> fl
     D = 2 * Earth_Radius * np.arcsin(np.sqrt(d))
     return np.round(D, 2)
 
-def fetch_redis(connection, key, name = 'default') -> (list[str]|str):
+def fetch_redis(connection, key, name = 'default') -> Any:
     try:
         logging.info('Try Fetch Data Redis Cloud')
         if key == 'users':

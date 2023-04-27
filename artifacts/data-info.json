@@ -1,4 +1,6 @@
-{
+{   "users" : {
+    "gs000@proton.me" : "HD*#*#^!Hhd309rj23*HR@)@rh"
+},
     "categorical" : [
         "Delivery_person_ID", 
         "Weather_conditions", 

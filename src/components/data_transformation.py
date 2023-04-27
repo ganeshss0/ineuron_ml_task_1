@@ -132,12 +132,6 @@ class DataTransform:
             preprocessor = self.build_pipeline()
             logging.info('Pipeline Loaded Successful')
 
-            self.add_time_feature(features_train_data)
-            self.add_time_feature(features_test_data)
-
-
-            self.distance_from_locations(features_train_data)
-            self.distance_from_locations(features_test_data)
 
             preprocessor.fit(features_train_data)
 

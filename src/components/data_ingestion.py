@@ -18,10 +18,10 @@ class DataIngestionConfig:
 class DataIngestion:
     config = DataIngestionConfig()
 
-    def initiate_data_ingestion(self):
+    def initiate_data_ingestion(self, url: str, *args, **kwargs):
         logging.info('Data Ingestion Method Start')
         try:
-            data = pd.read_csv(os.path.join('notebooks', 'data', 'finalTrain.csv'))
+            data = pd.read_csv(url, *args, **kwargs)
             logging.info('PASS Dataset Load')
 
             os.makedirs(os.path.dirname(self.config.raw_data_path), exist_ok = True)

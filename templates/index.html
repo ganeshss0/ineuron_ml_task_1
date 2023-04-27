@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.css" rel="stylesheet"/> -->
+    
+    <title>Food Time Predict</title>
+</head>
+<body>
+    <h1>Food Delivery Time Predict</h1>
+    
+
+    <form action="/predict" method="POST">
+        
+        <label for="floatingSelect">Location</label>
+        <select class="form-select" size="3" aria-label="size 3 select example", id="location" name="location">
+            <!-- <option selected>Open this select menu</option> -->
+            <option value="AGR">Agra</option>
+            <option value="ALH">Allahabad</option>
+            <option value="AURG">Auragabad</option>
+            <option value="BANG">Banglore</option>
+            <option value="BHP">Bhopal</option>
+            <option value="CHEN">Chennai</option>
+            <option value="COIMB">Coimbatore</option>
+            <option value="DEH">Delhi</option>
+            <option value="GOA">Goa</option>
+            <option value="HYD">Hyderabad</option>
+            <option value="INDO">Indore</option>
+            <option value="JAP">Jaipur</option>
+            <option value="KNP">Kanpur</option>
+            <option value="KOC">Cochin</option>
+            <option value="KOL">Kolkata</option>
+            <option value="LUDH">Ludhiana</option>
+            <option value="MUM">Mumbai</option>
+            <option value="MYS">Mysore</option>
+            <option value="PUNE">Pune</option>
+            <option value="RANCHI">Ranchi</option>
+            <option value="SUR">Surat</option>
+            <option value="VAD">Vadodara</option>
+          </select>
+
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="resNum">
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
+              <option value="04">4</option>
+              <option value="05">5</option>
+              <option value="06">6</option>
+              <option value="07">7</option>
+              <option value="08">8</option>
+              <option value="09">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+            </select>
+            <label for="floatingSelect">Restaurant Number</label>
+          </div>
+
+
+          <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="delNum">
+              <option value="01">1</option>
+              <option value="02">2</option>
+              <option value="03">3</option>
+            </select>
+            <label for="floatingSelect">Delivery Location</label>
+          </div>
+
+        
+        <label for="customRange3" class="form-label">Delivery Person Age</label>
+        <input type="range" class="form-range" min="15" max="50" id="customRange1" name="age">
+        <p>Age: <span id="display-age"></span></p>
+
+
+        <label for="customRange4" class="form-label">Delivery Person Ratings</label>
+        <input type="range" class="form-range" min="1" max="6" step="0.1" id="customRange2" name="rating">
+        <p>Ratings: <span id="display-rating"></span></p>
+
+        <script>
+            var slider1 = document.getElementById("customRange1");
+            var slider2 = document.getElementById("customRange2");
+ 
+
+            var output1= document.getElementById("display-age");
+            var output2 = document.getElementById("display-rating");
+            output1.innerHTML = slider1.value;
+            output2.innerHTML = slider2.value;
+
+
+
+            slider1.oninput = function() {
+              output1.innerHTML = this.value;
+            } 
+
+            slider2.oninput = function() {
+                output2.innerHTML = this.value;
+            }
+            </script>
+
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Restaurant Latitude</label>
+                <input type="number" class="form-control" min="0" max="32" step="0.0001" id="exampleFormControlInput1" placeholder="" name="resLat">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Restaurant Longitude</label>
+                <input type="number" class="form-control" min="0" max="89" step="0.0001" id="exampleFormControlInput1" placeholder="" name="resLong">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Delivery Location Latitude</label>
+                <input type="number" class="form-control" min="0" max="32" step="0.0001" id="exampleFormControlInput1" placeholder="" name="delLat">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Delivery Location Longitude</label>
+                <input type="number" class="form-control" min="0" max="89" step="0.0001" id="exampleFormControlInput1" placeholder="" name="delLong">
+            </div>
+        
+            <div class="form-outline datepicker">
+                <label for="exampleDatepicker1" class="form-label">Order Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="exampleDatepicker1"
+                  name="date"
+                />
+              </div>
+
+              <div class="form-outline datepicker">
+                <label for="exampleDatepicker1" class="form-label">Order Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="exampleDatepicker1"
+                  name="orderTime"
+                />
+              </div>
+
+              <div class="form-outline datepicker">
+                <label for="exampleDatepicker1" class="form-label">Order Picked Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="exampleDatepicker1"
+                  name="orderPickTime"
+                />
+              </div>
+              
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="weather">
+              <option value="Cloudy">Cloudy</option>
+              <option value="Fog">Fog</option>
+              <option value="Sandstorms">Sandstorms</option>
+              <option value="Stormy">Stormy</option>
+              <option value="Sunny">Sunny</option>
+              <option value="Windy">Windy</option>
+            </select>
+            <label for="floatingSelect">Weather Conditions</label>
+        </div>
+        
+        
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="traffic">
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Jam">Jam</option>
+            </select>
+            <label for="floatingSelect">Road Traffic Density</label>
+          </div>
+          
+
+          <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="vehicleCondition">
+                <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+            <label for="floatingSelect">Vehicle Conditions</label>
+          </div>
+
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="orderType">
+                <option value="Buffet">Buffet</option>
+                <option value="Drinks">Drinks</option>
+                <option value="Meal">Meal</option>
+                <option value="Snacks">Snacks</option>
+            </select>
+            <label for="floatingSelect">Order Type</label>
+        </div>
+        
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="vehicle">
+              <!-- <option selected>Vehicle Type</option> -->
+              <option value="bicycle">Bicycle</option>
+              <option value="electric_scooter">Electric Scooter</option>
+              <option value="motorcycle">Motorcycle</option>
+              <option value="scooter">Scooter</option>
+            </select>
+            <label for="floatingSelect">Vehicle Type</label>
+          </div>
+
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="multipleDelivery">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+            <label for="floatingSelect">Multiple Deliveries</label>
+          </div>
+
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="festival">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+              <label for="floatingSelect">Festival</label>
+        </div>
+
+
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="city">
+              <option value="Metropolitian">Metropolitian</option>
+              <option value="Semi-Urban">Semi-Urban</option>
+              <option value="Urban">Urban</option>
+            </select>
+            <label for="floatingSelect">City Type</label>
+          </div>
+
+        <button type="submit" class="btn btn-primary mb-3">Delivery Time</button>
+      </form>
+      <form action="/login" method="GET">
+
+          <button type="submit" class="btn btn-primary mb-3">Train Model</button>
+        </form>
+</body>
+</html>

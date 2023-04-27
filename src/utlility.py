@@ -1,7 +1,7 @@
 import os, sys
 from src.exception import CustomException
 from src.logger import logging
-import pickle
+from joblib import load, dump
 import numpy as np
 import pandas as pd
 import redis
@@ -17,8 +17,7 @@ def saveObject(file_path: str, obj: object) -> None:
         dir_name = os.path.dirname(file_path)
         os.makedirs(dir_name, exist_ok = True)
 
-        with open(file_path, 'wb') as file:
-            pickle.dump(obj, file)
+        dump(obj, file_path)
         logging.info(f'Successful Save Object at {file_path}')
 
     except Exception as e:
@@ -28,8 +27,7 @@ def saveObject(file_path: str, obj: object) -> None:
     
 def loadObject(file_path: str) -> None:
     try:
-        with open(file_path, 'rb') as file:
-            obj = pickle.load(file)
+        obj = load(file_path)
         logging.info(f'Successful Read Object at {file_path}')
         return obj
     

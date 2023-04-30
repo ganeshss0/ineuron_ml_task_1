@@ -4,4 +4,7 @@ To run this application install required packages:<br />
 `pip install -r requirements.txt`<br />
 and then run:<br />
 `python app.py`<br />
+Architecture:
+
+
 [Deployment](https://food-price-predict.azurewebsites.net)

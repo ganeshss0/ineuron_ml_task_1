@@ -4,4 +4,9 @@ scikit-learn
 redis
 flask
 flask-cors
+<<<<<<< HEAD
 -e .
+=======
+joblib
+-e .
+>>>>>>> 78479053a4a13d66b6847a21088258b0444e87db

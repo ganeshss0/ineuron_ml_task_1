@@ -31,7 +31,7 @@ def predict():
         data = CustomData(*form_data)
         df = data.get_data_as_dataframe()
         predict_pipeline = PredictPipeline()
-        result = predict_pipeline.predict(df)
+        result = predict_pipeline.predict(df)[0]
         return render_template('result.html', result = result)
 
     except Exception as e:
